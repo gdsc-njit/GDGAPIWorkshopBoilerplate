@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Flashcard Generator</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 90vh; /* Limit the height of the container */
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #3498db;
+        }
+
+        .dropzone {
+            border: 3px dashed #3498db;
+            border-radius: 10px;
+            padding: 40px;
+            background-color: #eaf4fb;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dropzone:hover {
+            background-color: #d5ecf7;
+        }
+
+        .dropzone p {
+            font-size: 1.2rem;
+            color: #3498db;
+            margin: 0;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        /* Flashcard container will have a scrollbar if content exceeds */
+        .flashcard-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+            overflow-y: auto;
+            padding-right: 10px;
+            flex-grow: 1;
+        }
+
+        .flashcard-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .flashcard-container::-webkit-scrollbar-thumb {
+            background-color: #3498db;
+            border-radius: 5px;
+        }
+
+        .flashcard {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Remove max-height to allow dynamic height */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+}
+
+
+        .flashcard .question {
+            font-weight: bold;
+            color: #3498db;
+            font-size: 1.1rem;
+        }
+
+        .flashcard .answer {
+            margin-top: 10px;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: none;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner-text {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .dropzone {
+                padding: 30px;
+            }
+
+            .flashcard .question {
+                font-size: 1rem;
+            }
+
+            .flashcard .answer {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>PDF Flashcard Generator</h1>
+    <div id="dropzone" class="dropzone">
+        <p>Click or drag a PDF file here to upload</p>
+    </div>
+    <input type="file" id="file-input" accept=".pdf">
+    
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p class="spinner-text">Processing your PDF and generating flashcards...</p>
+    </div>
+
+    <div id="flashcards" class="flashcard-container"></div>
+</div>
+
+<script>
+    const dropzone = document.getElementById('dropzone');
+//    const fileInput = document.getElementById('file-input');
+    const flashcardsContainer = document.getElementById('flashcards');
+    const loading = document.getElementById('loading');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    // fileInput.addEventListener('change', () => {
+    //     if (fileInput.files.length) {
+    //         handleFile(fileInput.files[0]);
+    //     }
+    // });
+
+    function handleFile(file) {
+        if (file.type !== 'application/pdf') {
+            alert('Please upload a valid PDF file.');
+            return;
+        }
+
+        // Show the loading spinner
+        loading.style.display = 'block';
+        flashcardsContainer.innerHTML = '';  // Clear any existing flashcards
+
+        // const formData = new FormData();
+        // formData.append('file', file);
+
+        // fetch('/upload', {
+        //     method: 'POST',
+        //     body: formData
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //     // Hide the loading spinner
+        //     loading.style.display = 'none';
+
+        //     if (data.error) {
+        //         alert('Error: ' + data.error);
+        //     } else if (data.flashcards) {
+        //         displayFlashcards(data.flashcards);
+        //     }
+        // })
+        // .catch(error => {
+        //     loading.style.display = 'none';  // Hide the loading spinner
+        //     alert('Error: ' + error.message);
+        // });
+    }
+
+    function displayFlashcards(flashcards) {
+        flashcardsContainer.innerHTML = '';  // Clear any existing flashcards
+
+        const lines = flashcards.trim().split('\n');
+        let currentFlashcard = null;
+
+        // lines.forEach(line => {
+        //     if (line.startsWith("Q:")) {
+        //         if (currentFlashcard) {
+        //             flashcardsContainer.appendChild(currentFlashcard);
+        //         }
+        //         currentFlashcard = document.createElement('div');
+        //         currentFlashcard.classList.add('flashcard');
+        //         const question = document.createElement('div');
+        //         question.classList.add('question');
+        //         question.textContent = line;
+        //         currentFlashcard.appendChild(question);
+        //     } else if (line.startsWith("A:")) {
+        //         const answer = document.createElement('div');
+        //         answer.classList.add('answer');
+        //         answer.textContent = line;
+        //         currentFlashcard.appendChild(answer);
+        //     }
+        // });
+
+        if (currentFlashcard) {
+            flashcardsContainer.appendChild(currentFlashcard);
+        }
+    }
+</script>
+</body>
+</html>
